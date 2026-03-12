@@ -3,7 +3,7 @@ import {
   LayoutDashboard, BookOpen, ShoppingBag, CreditCard, 
   Users, Settings, Plus, Check, X, Edit, Trash2,
   Briefcase, MessageSquare, UserPlus, Loader2, Image as ImageIcon,
-  LogOut
+  LogOut, Calendar
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { formatCurrency, cn } from '@/lib/utils';
@@ -177,6 +177,20 @@ export default function AdminDashboard() {
 function DynamicForm({ type, initialData, onSuccess }: { type: string, initialData?: any, onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<any>(initialData || {});
+  const [liveCourses, setLiveCourses] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (type === 'live_classes') {
+      supabase.from('courses').select('id, title').eq('type', 'live').then(({ data }) => {
+        if (data) {
+          setLiveCourses(data);
+          if (!formData.course_id && data.length > 0) {
+            setFormData(prev => ({ ...prev, course_id: data[0].id }));
+          }
+        }
+      });
+    }
+  }, [type]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -195,12 +209,17 @@ function DynamicForm({ type, initialData, onSuccess }: { type: string, initialDa
       case 'settings': table = 'settings'; break;
     }
 
+    let dataToSave = { ...formData };
+    if (type === 'live_classes' && dataToSave.start_time) {
+      dataToSave.start_time = new Date(dataToSave.start_time).toISOString();
+    }
+
     let error;
     if (initialData?.id) {
-      const { error: err } = await supabase.from(table).update(formData).eq('id', initialData.id);
+      const { error: err } = await supabase.from(table).update(dataToSave).eq('id', initialData.id);
       error = err;
     } else {
-      const { error: err } = await supabase.from(table).insert([formData]);
+      const { error: err } = await supabase.from(table).insert([dataToSave]);
       error = err;
     }
     
@@ -300,10 +319,22 @@ function DynamicForm({ type, initialData, onSuccess }: { type: string, initialDa
       case 'live_classes':
         return (
           <>
-            <Input label="Course ID" name="course_id" value={formData.course_id} onChange={setFormData} />
+            <div className="space-y-2">
+              <label className="text-sm font-bold ml-2">Select Live Course</label>
+              <select 
+                className="w-full p-4 rounded-2xl border dark:border-white/10 bg-white/50 dark:bg-black/20 outline-none"
+                value={formData.course_id || ''}
+                onChange={(e) => setFormData({ ...formData, course_id: e.target.value })}
+              >
+                <option value="" disabled>Select a course</option>
+                {liveCourses.map(c => (
+                  <option key={c.id} value={c.id}>{c.title}</option>
+                ))}
+              </select>
+            </div>
             <Input label="Class Title" name="title" value={formData.title} onChange={setFormData} />
             <Input label="Zoom Link" name="zoom_link" value={formData.zoom_link} onChange={setFormData} />
-            <Input label="Start Time" name="start_time" type="datetime-local" value={formData.start_time} onChange={setFormData} />
+            <Input label="Start Time" name="start_time" type="datetime-local" value={formData.start_time ? new Date(new Date(formData.start_time).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ''} onChange={setFormData} />
           </>
         );
       case 'settings':
@@ -490,6 +521,15 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
             <div className="w-16 h-16 rounded-full bg-slate-200 dark:bg-white/10 mb-4 flex items-center justify-center text-2xl font-bold text-secondary/40">
               {item.name.charAt(0).toUpperCase()}
             </div>
+          ) : table === 'live_classes' ? (
+            <div className="aspect-video rounded-2xl bg-primary/10 mb-4 flex flex-col items-center justify-center text-primary p-4 text-center">
+              <Calendar size={32} className="mb-2" />
+              <span className="text-xs font-bold">{new Date(item.start_time).toLocaleString()}</span>
+            </div>
+          ) : table === 'settings' ? (
+            <div className="aspect-video rounded-2xl bg-slate-100 dark:bg-white/5 mb-4 flex items-center justify-center text-secondary/40">
+              <Settings size={32} />
+            </div>
           ) : (
             <div className="aspect-video rounded-2xl bg-slate-100 dark:bg-white/5 mb-4 overflow-hidden">
               <img 
@@ -500,8 +540,10 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
               />
             </div>
           )}
-          <h4 className="font-bold mb-1 truncate">{item.title || item.name}</h4>
-          <p className="text-xs text-secondary/40 dark:text-white/40 line-clamp-2">{item.description || item.feedback || item.bio || item.result}</p>
+          <h4 className="font-bold mb-1 truncate">{item.title || item.name || item.key}</h4>
+          <p className="text-xs text-secondary/40 dark:text-white/40 line-clamp-2">
+            {table === 'live_classes' ? item.zoom_link : table === 'settings' ? item.value : (item.description || item.feedback || item.bio || item.result)}
+          </p>
         </div>
       ))}
       {data.length === 0 && (
