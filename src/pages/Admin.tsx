@@ -520,13 +520,14 @@ function OverviewTab() {
     { label: 'Product Sales', value: '0', change: '+0%', icon: ShoppingBag },
   ]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [pendingOrders, setPendingOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchOverviewData() {
       try {
         // Fetch stats
-        const { data: orders } = await supabase.from('orders').select('amount, status, type');
+        const { data: orders } = await supabase.from('orders').select('amount, status, item_type');
         const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
         
         if (orders) {
@@ -534,8 +535,8 @@ function OverviewTab() {
             .filter(o => o.status === 'approved')
             .reduce((acc, curr) => acc + (curr.amount || 0), 0);
           
-          const courseSales = orders.filter(o => o.type === 'course' && o.status === 'approved').length;
-          const productSales = orders.filter(o => o.type === 'product' && o.status === 'approved').length;
+          const courseSales = orders.filter(o => o.item_type === 'course' && o.status === 'approved').length;
+          const productSales = orders.filter(o => o.item_type === 'product' && o.status === 'approved').length;
 
           setStats([
             { label: 'Total Revenue', value: `$${totalRevenue.toLocaleString()}`, change: '+12%', icon: CreditCard },
@@ -553,6 +554,15 @@ function OverviewTab() {
           .limit(5);
         
         if (recent) setRecentActivity(recent);
+
+        // Fetch pending orders
+        const { data: pending } = await supabase
+          .from('orders')
+          .select('*, profiles(full_name)')
+          .eq('status', 'pending')
+          .order('created_at', { ascending: false });
+        
+        if (pending) setPendingOrders(pending);
       } catch (error) {
         console.error('Error fetching overview data:', error);
       } finally {
@@ -582,6 +592,34 @@ function OverviewTab() {
             <h3 className="text-2xl font-bold">{stat.value}</h3>
           </div>
         ))}
+      </div>
+
+      {/* Pending Orders */}
+      <div className="glass dark:glass-dark rounded-3xl p-8">
+        <h3 className="text-lg font-bold mb-6 text-yellow-500">Pending Orders</h3>
+        <div className="space-y-6">
+          {pendingOrders.map((order, i) => (
+            <div key={i} className="flex items-center justify-between py-4 border-b dark:border-white/5 last:border-0">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-yellow-500/10 rounded-full flex items-center justify-center text-yellow-500">
+                  <CreditCard size={20} />
+                </div>
+                <div>
+                  <p className="font-bold text-sm">{order.profiles?.full_name || 'New Order'}</p>
+                  <p className="text-xs text-secondary/40 dark:text-white/40">
+                    {order.item_name} - ${order.amount} - TRX: {order.transaction_id}
+                  </p>
+                </div>
+              </div>
+              <a href="#payments" onClick={() => window.location.hash = 'payments'} className="text-xs font-bold uppercase tracking-wider text-primary hover:underline">
+                Approve
+              </a>
+            </div>
+          ))}
+          {pendingOrders.length === 0 && (
+            <div className="text-center py-10 text-secondary/40">No pending orders.</div>
+          )}
+        </div>
       </div>
 
       <div className="glass dark:glass-dark rounded-3xl p-8">
