@@ -216,6 +216,7 @@ function DynamicForm({ type, initialData, onSuccess }: { type: string, initialDa
           <>
             <Input label="Title" name="title" value={formData.title} onChange={setFormData} />
             <Input label="Description" name="description" value={formData.description} isTextArea onChange={setFormData} />
+            <Input label="Instructor" name="instructor" value={formData.instructor} onChange={setFormData} />
             <div className="grid grid-cols-2 gap-4">
               <Input label="Price" name="price" type="number" value={formData.price} onChange={setFormData} />
               <Input label="Duration" name="duration" placeholder="e.g. 8 Weeks" value={formData.duration} onChange={setFormData} />
