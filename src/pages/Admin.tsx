@@ -369,16 +369,32 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
   }
 
   async function handleBulkAdd() {
-    if (!confirm('Are you sure you want to add 50 dummy testimonials?')) return;
+    if (!confirm('Are you sure you want to add realistic testimonials?')) return;
     setLoading(true);
-    const testimonials = Array.from({ length: 50 }, (_, i) => ({
-      name: `User ${i + 1}`,
-      profession: 'Customer',
-      country: 'Bangladesh',
-      feedback: `This is a great service! Testimonial number ${i + 1}.`,
-      photo: `https://picsum.photos/seed/${i + 1}/100/100`
-    }));
-    const { error } = await supabase.from('testimonials').insert(testimonials);
+    const realisticTestimonials = [
+      {
+        name: "Rahim Ahmed",
+        profession: "Startup Founder",
+        country: "Bangladesh",
+        feedback: "MukitX helped us build our MVP in record time. Their expertise in SaaS development is top-notch!",
+        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&auto=format&fit=crop"
+      },
+      {
+        name: "Sara Islam",
+        profession: "E-commerce Owner",
+        country: "Bangladesh",
+        feedback: "The website they designed for my brand is beautiful and converts so well. Highly recommended.",
+        photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&h=200&auto=format&fit=crop"
+      },
+      {
+        name: "Karim Ullah",
+        profession: "Student",
+        country: "Bangladesh",
+        feedback: "The courses at MukitX are very practical. I learned more here than in my university classes.",
+        photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&h=200&auto=format&fit=crop"
+      }
+    ];
+    const { error } = await supabase.from('testimonials').insert(realisticTestimonials);
     if (!error) fetchData();
     else {
       alert(error.message);
@@ -392,7 +408,7 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
     <div>
       {table === 'testimonials' && (
         <button onClick={handleBulkAdd} className="btn-gradient text-sm py-2 px-4 mb-6">
-          Bulk Add 50 Testimonials
+          Add Realistic Testimonials
         </button>
       )}
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
