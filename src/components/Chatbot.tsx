@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from '@google/genai';
@@ -37,11 +37,15 @@ export default function Chatbot() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const chat = useRef(ai.chats.create({
-    model: 'gemini-3-flash-preview',
-    config: { systemInstruction: SYSTEM_PROMPT }
-  }));
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -53,9 +57,24 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
-      const response = await chat.current.sendMessage({ message: userMessage });
+      // Format history for Gemini (roles must be 'user' or 'model')
+      const contents = currentHistory
+        .filter(m => m.text !== 'Hello! How can I help you with MukitX today?')
+        .map(m => ({
+          role: m.role === 'ai' ? 'model' : 'user',
+          parts: [{ text: m.text }]
+        }));
+        
+      contents.push({ role: 'user', parts: [{ text: userMessage }] });
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: contents,
+        config: { systemInstruction: SYSTEM_PROMPT }
+      });
+      
       setMessages(prev => [...prev, { role: 'ai', text: response.text || 'Sorry, I could not process that.' }]);
-    } catch (error) {
+    } catch (error: any) {
       console.warn("Gemini API failed, falling back to Groq...", error);
       try {
         const groqMessages = [
@@ -79,14 +98,22 @@ export default function Chatbot() {
           })
         });
 
-        if (!groqResponse.ok) throw new Error(`Groq API error: ${groqResponse.statusText}`);
+        if (!groqResponse.ok) {
+          const errData = await groqResponse.json().catch(() => ({}));
+          throw new Error(`Groq Error ${groqResponse.status}: ${errData.error?.message || groqResponse.statusText}`);
+        }
         
         const data = await groqResponse.json();
         const reply = data.choices[0]?.message?.content || 'Sorry, I could not process that.';
         setMessages(prev => [...prev, { role: 'ai', text: reply }]);
-      } catch (groqError) {
+      } catch (groqError: any) {
         console.error("Both APIs failed:", groqError);
-        setMessages(prev => [...prev, { role: 'ai', text: 'Sorry, both AI systems are currently unavailable. Please try again later.' }]);
+        const geminiMsg = error?.message || 'Unknown error';
+        const groqMsg = groqError?.message || 'CORS/Network error';
+        setMessages(prev => [...prev, { 
+          role: 'ai', 
+          text: `Error Details:\nGemini: ${geminiMsg}\nGroq: ${groqMsg}\n\nPlease check browser console for more details.` 
+        }]);
       }
     } finally {
       setIsLoading(false);
@@ -109,11 +136,12 @@ export default function Chatbot() {
             </div>
             <div className="flex-grow overflow-y-auto p-4 space-y-4">
               {messages.map((m, i) => (
-                <div key={i} className={`p-3 rounded-lg text-sm ${m.role === 'user' ? 'bg-primary/10 ml-auto max-w-[80%]' : 'bg-secondary/10 mr-auto max-w-[80%]'}`}>
+                <div key={i} className={`p-3 rounded-lg text-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-primary/10 ml-auto max-w-[80%]' : 'bg-secondary/10 mr-auto max-w-[80%]'}`}>
                   {m.text}
                 </div>
               ))}
               {isLoading && <Loader2 className="animate-spin text-primary" />}
+              <div ref={messagesEndRef} />
             </div>
             <div className="p-4 border-t dark:border-white/10 flex gap-2">
               <input 
