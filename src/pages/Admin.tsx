@@ -267,6 +267,7 @@ function DynamicForm({ type, initialData, onSuccess }: { type: string, initialDa
           <>
             <Input label="Name" name="name" value={formData.name} onChange={setFormData} />
             <Input label="Position" name="position" value={formData.position} onChange={setFormData} />
+            <Input label="Display Order" name="display_order" type="number" value={formData.display_order} onChange={setFormData} />
             <Input label="Bio" name="bio" value={formData.bio} isTextArea onChange={setFormData} />
             <Input label="Photo URL" name="photo" value={formData.photo} onChange={setFormData} />
           </>
@@ -346,7 +347,17 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
   }, [table]);
 
   async function fetchData() {
-    const { data: result } = await supabase.from(table).select('*').order('created_at', { ascending: false });
+    let query = supabase.from(table).select('*');
+    
+    if (table === 'team_members') {
+      query = query.order('display_order', { ascending: true });
+    } else if (table === 'course_videos') {
+      query = query.order('order_index', { ascending: true });
+    } else {
+      query = query.order('created_at', { ascending: false });
+    }
+
+    const { data: result } = await query;
     if (result) setData(result);
     setLoading(false);
   }

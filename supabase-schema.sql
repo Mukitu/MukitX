@@ -91,6 +91,7 @@ CREATE TABLE IF NOT EXISTS team_members (
   position TEXT NOT NULL,
   photo TEXT,
   bio TEXT,
+  display_order INTEGER DEFAULT 0,
   social_links JSONB,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );

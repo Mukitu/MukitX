@@ -217,7 +217,7 @@ export function Team() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.from('team_members').select('*').limit(4).then(({ data }) => {
+    supabase.from('team_members').select('*').order('display_order', { ascending: true }).then(({ data }) => {
       if (data) setMembers(data);
       setLoading(false);
     });
