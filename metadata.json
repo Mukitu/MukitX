@@ -1,0 +1,9 @@
+{
+  "name": "MukitX - Premium IT Agency & Education",
+  "description": "A top-tier IT Agency, Online Course Platform, and Digital Product Marketplace built for the future.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
