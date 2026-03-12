@@ -26,8 +26,9 @@ Rules:
 3. If asked about the owner, mention Mukitu Islam Nishat, his role as an International fellowship-awarded Software Developer.
 4. Always provide the contact number and location when asked about contact information.`;
 
-const apiKey = process.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyB5cKqVlPnOXUws8IZFj0TDHQSDhSUrHU4';
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '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';
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +48,8 @@ export default function Chatbot() {
     if (!input.trim()) return;
     const userMessage = input;
     setInput('');
+    
+    const currentHistory = [...messages];
     setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
     setIsLoading(true);
 
@@ -54,8 +57,38 @@ export default function Chatbot() {
       const response = await chat.current.sendMessage({ message: userMessage });
       setMessages(prev => [...prev, { role: 'ai', text: response.text || 'Sorry, I could not process that.' }]);
     } catch (error) {
-      console.error("Chatbot Error:", error);
-      setMessages(prev => [...prev, { role: 'ai', text: 'Sorry, I encountered an error. Please check if the API key is configured correctly.' }]);
+      console.warn("Gemini API failed, falling back to Groq...", error);
+      try {
+        const groqMessages = [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...currentHistory.map(m => ({ 
+            role: m.role === 'ai' ? 'assistant' : 'user', 
+            content: m.text 
+          })),
+          { role: 'user', content: userMessage }
+        ];
+
+        const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${GROQ_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'llama3-8b-8192',
+            messages: groqMessages
+          })
+        });
+
+        if (!groqResponse.ok) throw new Error(`Groq API error: ${groqResponse.statusText}`);
+        
+        const data = await groqResponse.json();
+        const reply = data.choices[0]?.message?.content || 'Sorry, I could not process that.';
+        setMessages(prev => [...prev, { role: 'ai', text: reply }]);
+      } catch (groqError) {
+        console.error("Both APIs failed:", groqError);
+        setMessages(prev => [...prev, { role: 'ai', text: 'Sorry, both AI systems are currently unavailable. Please try again later.' }]);
+      }
     } finally {
       setIsLoading(false);
     }
