@@ -26,7 +26,8 @@ Rules:
 3. If asked about the owner, mention Mukitu Islam Nishat, his role as an International fellowship-awarded Software Developer.
 4. Always provide the contact number and location when asked about contact information.`;
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyB5cKqVlPnOXUws8IZFj0TDHQSDhSUrHU4';
+// এখানে আপনার নতুন Gemini API Key বসান
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'YOUR_NEW_GEMINI_API_KEY_HERE';
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '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';
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
@@ -57,7 +58,6 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
-      // Format history for Gemini (roles must be 'user' or 'model')
       const contents = currentHistory
         .filter(m => m.text !== 'Hello! How can I help you with MukitX today?')
         .map(m => ({
@@ -93,7 +93,7 @@ export default function Chatbot() {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            model: 'llama3-8b-8192',
+            model: 'llama-3.1-8b-instant', // Updated to the new working model
             messages: groqMessages
           })
         });
