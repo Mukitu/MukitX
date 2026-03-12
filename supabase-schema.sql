@@ -92,7 +92,9 @@ CREATE TABLE IF NOT EXISTS team_members (
   photo TEXT,
   bio TEXT,
   display_order INTEGER DEFAULT 0,
-  social_links JSONB,
+  x_link TEXT,
+  github_link TEXT,
+  linkedin_link TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
@@ -102,8 +104,19 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
   title TEXT NOT NULL,
   category TEXT,
   image TEXT,
+  link TEXT,
   tech TEXT[],
   result TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- BLOG POSTS
+CREATE TABLE IF NOT EXISTS blog_posts (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  image_url TEXT,
+  author_id UUID REFERENCES profiles(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
@@ -132,6 +145,7 @@ ALTER TABLE live_classes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE testimonials ENABLE ROW LEVEL SECURITY;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE course_videos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE live_classes ENABLE ROW LEVEL SECURITY;
@@ -186,6 +200,12 @@ BEGIN
     CREATE POLICY "Public read testimonials" ON testimonials FOR SELECT USING (true);
     DROP POLICY IF EXISTS "Admin manage testimonials" ON testimonials;
     CREATE POLICY "Admin manage testimonials" ON testimonials FOR ALL USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+
+    -- Blog Posts
+    DROP POLICY IF EXISTS "Public read blog posts" ON blog_posts;
+    CREATE POLICY "Public read blog posts" ON blog_posts FOR SELECT USING (true);
+    DROP POLICY IF EXISTS "Admin manage blog posts" ON blog_posts;
+    CREATE POLICY "Admin manage blog posts" ON blog_posts FOR ALL USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
     -- Settings
     DROP POLICY IF EXISTS "Public read settings" ON settings;

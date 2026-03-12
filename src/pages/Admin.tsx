@@ -16,6 +16,7 @@ const sidebarItems = [
   { icon: BookOpen, label: 'Courses', id: 'courses' },
   { icon: ShoppingBag, label: 'Products', id: 'products' },
   { icon: Briefcase, label: 'Portfolio', id: 'portfolio' },
+  { icon: MessageSquare, label: 'Blog', id: 'blog' },
   { icon: MessageSquare, label: 'Testimonials', id: 'testimonials' },
   { icon: UserPlus, label: 'Team', id: 'team' },
   { icon: BookOpen, label: 'Videos', id: 'course_videos' },
@@ -120,6 +121,7 @@ export default function AdminDashboard() {
               {activeTab === 'courses' && <DataManagementTab table="courses" onEdit={handleEdit} />}
               {activeTab === 'products' && <DataManagementTab table="products" onEdit={handleEdit} />}
               {activeTab === 'portfolio' && <DataManagementTab table="portfolio_projects" onEdit={handleEdit} />}
+              {activeTab === 'blog' && <DataManagementTab table="blog_posts" onEdit={handleEdit} />}
               {activeTab === 'testimonials' && <DataManagementTab table="testimonials" onEdit={handleEdit} />}
               {activeTab === 'team' && <DataManagementTab table="team_members" onEdit={handleEdit} />}
               {activeTab === 'course_videos' && <DataManagementTab table="course_videos" onEdit={handleEdit} />}
@@ -185,6 +187,7 @@ function DynamicForm({ type, initialData, onSuccess }: { type: string, initialDa
       case 'courses': table = 'courses'; break;
       case 'products': table = 'products'; break;
       case 'portfolio': table = 'portfolio_projects'; break;
+      case 'blog': table = 'blog_posts'; break;
       case 'testimonials': table = 'testimonials'; break;
       case 'team': table = 'team_members'; break;
       case 'course_videos': table = 'course_videos'; break;
@@ -251,6 +254,15 @@ function DynamicForm({ type, initialData, onSuccess }: { type: string, initialDa
             <Input label="Result/Description" name="result" value={formData.result} isTextArea onChange={setFormData} />
             <Input label="Category" name="category" value={formData.category} onChange={setFormData} />
             <Input label="Image URL" name="image" value={formData.image} onChange={setFormData} />
+            <Input label="Project Link" name="link" value={formData.link} onChange={setFormData} />
+          </>
+        );
+      case 'blog':
+        return (
+          <>
+            <Input label="Title" name="title" value={formData.title} onChange={setFormData} />
+            <Input label="Content" name="content" value={formData.content} isTextArea onChange={setFormData} />
+            <Input label="Image URL" name="image_url" value={formData.image_url} onChange={setFormData} />
           </>
         );
       case 'testimonials':
@@ -271,6 +283,9 @@ function DynamicForm({ type, initialData, onSuccess }: { type: string, initialDa
             <Input label="Display Order" name="display_order" type="number" value={formData.display_order} onChange={setFormData} />
             <Input label="Bio" name="bio" value={formData.bio} isTextArea onChange={setFormData} />
             <Input label="Photo URL" name="photo" value={formData.photo} onChange={setFormData} />
+            <Input label="X (Twitter) Link" name="x_link" value={formData.x_link} onChange={setFormData} />
+            <Input label="GitHub Link" name="github_link" value={formData.github_link} onChange={setFormData} />
+            <Input label="LinkedIn Link" name="linkedin_link" value={formData.linkedin_link} onChange={setFormData} />
           </>
         );
       case 'course_videos':

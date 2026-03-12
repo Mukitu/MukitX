@@ -184,12 +184,14 @@ export function Portfolio() {
             {projects.map((project, i) => (
               <motion.div key={i} className="group cursor-pointer">
                 <div className="relative overflow-hidden rounded-3xl mb-6">
-                  <img 
-                    src={project.image || 'https://picsum.photos/seed/portfolio/800/450'} 
-                    alt={project.title}
-                    className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
-                  />
+                  <a href={project.link} target="_blank" rel="noopener noreferrer">
+                    <img 
+                      src={project.image || 'https://picsum.photos/seed/portfolio/800/450'} 
+                      alt={project.title}
+                      className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
+                      referrerPolicy="no-referrer"
+                    />
+                  </a>
                   <div className="absolute top-4 left-4 flex gap-2">
                     {project.category && (
                       <span className="px-3 py-1 bg-white/80 backdrop-blur-md text-xs font-bold rounded-full">
@@ -198,11 +200,13 @@ export function Portfolio() {
                     )}
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold mb-2">{project.title}</h3>
+                <a href={project.link} target="_blank" rel="noopener noreferrer">
+                  <h3 className="text-2xl font-bold mb-2">{project.title}</h3>
+                </a>
                 <p className="text-secondary/60 dark:text-white/60 mb-4 line-clamp-2">{project.result}</p>
-                <div className="flex items-center gap-2 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                <a href={project.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                   View Case Study <ArrowRight size={16} />
-                </div>
+                </a>
               </motion.div>
             ))}
           </div>
@@ -248,9 +252,9 @@ export function Team() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
                     <div className="flex gap-4">
-                      <a href="#" className="text-white hover:text-primary transition-colors"><Twitter size={20} /></a>
-                      <a href="#" className="text-white hover:text-primary transition-colors"><Linkedin size={20} /></a>
-                      <a href="#" className="text-white hover:text-primary transition-colors"><Github size={20} /></a>
+                      {member.x_link && <a href={member.x_link} target="_blank" rel="noopener noreferrer" className="text-white hover:text-primary transition-colors"><Twitter size={20} /></a>}
+                      {member.linkedin_link && <a href={member.linkedin_link} target="_blank" rel="noopener noreferrer" className="text-white hover:text-primary transition-colors"><Linkedin size={20} /></a>}
+                      {member.github_link && <a href={member.github_link} target="_blank" rel="noopener noreferrer" className="text-white hover:text-primary transition-colors"><Github size={20} /></a>}
                     </div>
                   </div>
                 </div>
