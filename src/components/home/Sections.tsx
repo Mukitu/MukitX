@@ -372,7 +372,7 @@ export function Footer() {
           </div>
         </div>
         <div className="pt-8 border-t dark:border-white/10 text-center text-sm text-secondary/40 dark:text-white/40">
-          © {new Date().getFullYear()} MukitX. All rights reserved. Built with passion by Mukit Ahmed.
+          © {new Date().getFullYear()} MukitX. All rights reserved. Built with passion by Mukitu Islam Nishat.
         </div>
       </div>
     </footer>
