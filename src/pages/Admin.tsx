@@ -380,32 +380,68 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
   }
 
   async function handleBulkAdd() {
-    if (!confirm('Are you sure you want to add realistic testimonials?')) return;
+    if (!confirm('Are you sure you want to add the provided testimonials?')) return;
     setLoading(true);
-    const realisticTestimonials = [
-      {
-        name: "Rahim Ahmed",
-        profession: "Startup Founder",
-        country: "Bangladesh",
-        feedback: "MukitX helped us build our MVP in record time. Their expertise in SaaS development is top-notch!",
-        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&auto=format&fit=crop"
-      },
-      {
-        name: "Sara Islam",
-        profession: "E-commerce Owner",
-        country: "Bangladesh",
-        feedback: "The website they designed for my brand is beautiful and converts so well. Highly recommended.",
-        photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&h=200&auto=format&fit=crop"
-      },
-      {
-        name: "Karim Ullah",
-        profession: "Student",
-        country: "Bangladesh",
-        feedback: "The courses at MukitX are very practical. I learned more here than in my university classes.",
-        photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&h=200&auto=format&fit=crop"
-      }
+    const testimonials = [
+      { name: "Robert Harrison", profession: "CEO, Nexa Digital", country: "Web Development", feedback: "The website is incredibly fast. They used the latest tech stack which significantly improved our SEO rankings." },
+      { name: "Sarah Miller", profession: "Founder, Bloom Boutique", country: "Web Development", feedback: "Exceptional work! My e-commerce site is now fully responsive and handles heavy traffic without any lag." },
+      { name: "David Thompson", profession: "Marketing Director, Prime Global", country: "Web Development", feedback: "Professional, clean code, and delivered on time. They turned our complex requirements into a sleek website." },
+      { name: "Elena Volkov", profession: "Product Manager, TechStream", country: "Web Development", feedback: "Their attention to detail in frontend development is unmatched. Highly recommended for any web project." },
+      { name: "Mark Fletcher", profession: "Owner, MF Logistics", country: "Web Development", feedback: "Simple, clean, and effective. The new site has doubled our online inquiries within a month." },
+      { name: "Jessica Lee", profession: "Co-Founder, Artify", country: "Web Development", feedback: "The backend is very easy to manage, and the design is exactly what we envisioned for our brand." },
+      { name: "Andrew Cook", profession: "Director, Insight Media", country: "Web Development", feedback: "Fast turnaround and great communication throughout the development process." },
+      { name: "Monica Geller", profession: "Lead Developer, Kitchen Pro", country: "Web Development", feedback: "Great technical skills. The site structure is perfectly optimized for both users and search engines." },
+      { name: "Jason Wright", profession: "Founder, CloudSettle", country: "SaaS Development", feedback: "The multi-tenant architecture they built is robust and scalable. Exactly what our SaaS needed." },
+      { name: "Kevin O'Sullivan", profession: "CTO, FinFlow", country: "SaaS Development", feedback: "Impressed by their understanding of subscription logic and data security in SaaS development." },
+      { name: "Linda Chen", profession: "Operations Head, TaskLink", country: "SaaS Development", feedback: "Our platform now handles thousands of concurrent users with zero downtime. Brilliant engineering." },
+      { name: "Michael Vance", profession: "CEO, Streamline ERP", country: "SaaS Development", feedback: "They built our MVP in record time without compromising on quality or security." },
+      { name: "Sophie Turner", profession: "Product Owner, HR Pulse", country: "SaaS Development", feedback: "Highly skilled in cloud integrations. The dashboard they designed is both powerful and easy to use." },
+      { name: "Ryan Reynolds", profession: "Founder, Creative CRM", country: "SaaS Development", feedback: "The most reliable partner for long-term SaaS maintenance and feature development." },
+      { name: "Alice Morgan", profession: "Manager, EduCloud", country: "SaaS Development", feedback: "Their modular approach to coding makes it very easy for us to scale in the future." },
+      { name: "Paul Walker", profession: "DevOps Engineer, SecureVault", country: "SaaS Development", feedback: "Top-tier SaaS solutions. The automated billing system works flawlessly." },
+      { name: "Chloe Bennett", profession: "Brand Lead, Pixel Creative", country: "UI UX Design", feedback: "The designs are modern, clean, and very intuitive. Our users love the new interface." },
+      { name: "Daniel Smith", profession: "Founder, Lux Decor", country: "UI UX Design", feedback: "They have a great eye for aesthetics. The UI design perfectly matches our premium brand identity." },
+      { name: "Megan Fox", profession: "Creative Director, Aura App", country: "UI UX Design", feedback: "User experience was their priority, and it shows. Our bounce rate has dropped significantly." },
+      { name: "Liam Neeson", profession: "CEO, SafeStay", country: "UI UX Design", feedback: "Professional and minimalist design. They made a complex app look very simple to navigate." },
+      { name: "Olivia Wilde", profession: "Marketing Head, GreenTech", country: "UI UX Design", feedback: "The wireframes were detailed, and the final design exceeded our expectations in every way." },
+      { name: "Chris Evans", profession: "Product Manager, Shield IT", country: "UI UX Design", feedback: "Fantastic color palettes and typography. They truly understand modern design trends." },
+      { name: "Natalie Hills", profession: "Owner, EcoShop", country: "UI UX Design", feedback: "Every pixel was thoughtfully placed. The mobile UI is especially impressive." },
+      { name: "Tom Hardy", profession: "Director, Venom Agency", country: "UI UX Design", feedback: "Creative and innovative. They helped us stand out from our competitors with a unique look." },
+      { name: "Steve Jobs", profession: "Founder, ConnectApp", country: "Mobile App Development", feedback: "The React Native app they built is incredibly smooth. It feels like a native iOS/Android app." },
+      { name: "Will Smith", profession: "CEO, Fresh Delivery", country: "Mobile App Development", feedback: "A single codebase for both platforms saved us a lot of time and money. Great performance." },
+      { name: "Scarlett Johnson", profession: "Director, BlackWidow Media", country: "Mobile App Development", feedback: "High-performance app with zero bugs. The integration with our backend was seamless." },
+      { name: "Tom Holland", profession: "App Developer, WebSlinger", country: "Mobile App Development", feedback: "Clean architecture and smooth animations. One of the best mobile dev teams I've worked with." },
+      { name: "Zendaya Coleman", profession: "Founder, Euphoria", country: "Mobile App Development", feedback: "They took care of everything from the UI design to the App Store submission process." },
+      { name: "Robert Downey", profession: "Investor, Stark Ventures", country: "Mobile App Development", feedback: "Reliable mobile solutions. The app is fast, secure, and very easy to navigate." },
+      { name: "Elizabeth Olsen", profession: "Founder, Visionary Tech", country: "Mobile App Development", feedback: "The offline mode works perfectly. It's exactly what our users in remote areas needed." },
+      { name: "Benedict C.", profession: "Manager, Strange Solutions", country: "Mobile App Development", feedback: "Complex features were implemented effortlessly. Great communication throughout the sprint." },
+      { name: "Brian Hall", profession: "Manager, AutoFlow", country: "Automation Tools", feedback: "Their custom automation scripts are saving us over 15 hours of manual work every week." },
+      { name: "Jeffery Dean", profession: "Operations Head, Logistics Pro", country: "Automation Tools", feedback: "The data scraping and reporting tool they built is a game-changer for our business." },
+      { name: "Billie Eilish", profession: "Founder, Creative Automation", country: "Automation Tools", feedback: "Simple tools that solved our most repetitive problems. Highly efficient service." },
+      { name: "Lawrence Page", profession: "CTO, Searchly", country: "Automation Tools", feedback: "The automated email workflow has improved our response time by 80%." },
+      { name: "Sheryl White", profession: "Director, DataLink", country: "Automation Tools", feedback: "Reliable automation that integrated perfectly with our existing Google Workspace." },
+      { name: "Samuel Jackson", profession: "Owner, SJ Enterprises", country: "Automation Tools", feedback: "Professional scripts with clear documentation. Very easy to maintain and scale." },
+      { name: "Grace Hopper", profession: "Software Architect, G-Tech", country: "Automation Tools", feedback: "Smart solutions for high-volume tasks. The ROI was visible within the first month." },
+      { name: "Timothy Cook", profession: "Operations Manager, FruitCo", country: "Automation Tools", feedback: "They simplified our complex reporting process with a very elegant automation tool." },
+      { name: "Gary V.", profession: "Founder, Media Labs", country: "Digital Marketing", feedback: "Our social media engagement grew by 200% after they took over our digital strategy." },
+      { name: "Neil P.", profession: "Marketing Consultant", country: "Digital Marketing", feedback: "Data-driven SEO that actually works. We are now ranking on the first page for key terms." },
+      { name: "Arianna H.", profession: "CEO, Thrive Digital", country: "Digital Marketing", feedback: "Great content strategy and targeted ads. Our lead generation has never been better." },
+      { name: "Seth G.", profession: "Brand Strategist", country: "Digital Marketing", feedback: "They know how to reach the right audience. Very creative and effective campaigns." },
+      { name: "Ann Handley", profession: "Director, Content Marketing", country: "Digital Marketing", feedback: "Professional ad management with a clear focus on ROI. Highly recommended for growth." },
+      { name: "Brian Halligan", profession: "Founder, Inbound Inc.", country: "Digital Marketing", feedback: "Their PPC strategy helped us scale our sales in a very competitive international market." },
+      { name: "Rand Fishkin", profession: "CEO, SparkToro", country: "Digital Marketing", feedback: "Excellent technical SEO audit and implementation. Our organic traffic is up by 50%." },
+      { name: "Mari Smith", profession: "Social Specialist", country: "Digital Marketing", feedback: "Engaging post designs and strategic ad placement. Real growth, real results." },
+      { name: "Ryan Deiss", profession: "Founder, Marketing Pros", country: "Digital Marketing", feedback: "They focus on conversions, not just clicks. A very professional and results-driven team." },
+      { name: "Guy Kawasaki", profession: "Chief Evangelist", country: "Digital Marketing", feedback: "Strategic branding and growth plans that work perfectly for global expansion." }
     ];
-    const { error } = await supabase.from('testimonials').insert(realisticTestimonials);
+    
+    // Shuffle the array
+    for (let i = testimonials.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [testimonials[i], testimonials[j]] = [testimonials[j], testimonials[i]];
+    }
+
+    const { error } = await supabase.from('testimonials').insert(testimonials);
     if (!error) fetchData();
     else {
       alert(error.message);
