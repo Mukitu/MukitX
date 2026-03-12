@@ -24,7 +24,7 @@ const sidebarItems = [
   { icon: CreditCard, label: 'Payments', id: 'payments' },
   { icon: Users, label: 'Users', id: 'users' },
   { icon: Settings, label: 'Settings', id: 'settings' },
-];
+]; // Sidebar items defined here
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
