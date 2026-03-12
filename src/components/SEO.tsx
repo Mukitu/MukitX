@@ -20,7 +20,7 @@ export default function SEO({ title, description, canonical, jsonLd }: SEOProps)
 
   return (
     <Helmet>
-      <title>{title} | MukitX</title>
+      <title>{title === 'Home' ? 'MukitX' : `${title} | MukitX`}</title>
       <meta name="description" content={description} />
       {canonical && <link rel="canonical" href={canonical} />}
       <script type="application/ld+json">
