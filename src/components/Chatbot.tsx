@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 
 const SYSTEM_PROMPT = `You are MukitX AI assistant for the website. 
 Help visitors with services, courses, digital products, enrollment, and payment instructions. 
@@ -37,7 +37,6 @@ export default function Chatbot() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const chatRef = useRef<HTMLDivElement>(null);
 
   const chat = useRef(ai.chats.create({
     model: 'gemini-3-flash-preview',
