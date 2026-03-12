@@ -8,6 +8,12 @@ Help visitors with services, courses, digital products, enrollment, and payment 
 Additionally, act as an intelligent tutor for students. You can help solve programming problems (in any language), explain academic concepts, and guide them through general learning challenges. 
 Keep responses professional, friendly, and human-like.
 
+CRITICAL LANGUAGE RULES:
+1. Always reply in the language the user uses.
+2. If the user writes in English, reply in proper, professional English.
+3. If the user writes in Bengali (Bangla) or asks to speak in Bangla, reply in proper Bengali script (বাংলা ফন্ট). 
+4. NEVER use broken "Banglish" (Romanized Bengali like "MukitX aste, ek web development company"). Always use either pure English or pure Bengali script.
+
 Brand Information:
 Company: MukitX
 Owner/Founder: Mukitu Islam Nishat (International fellowship-awarded Software Developer)
@@ -27,7 +33,7 @@ Rules:
 4. Always provide the contact number and location when asked about contact information.`;
 
 // এখানে আপনার নতুন Gemini API Key বসান
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'YOUR_NEW_GEMINI_API_KEY_HERE';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyB5cKqVlPnOXUws8IZFj0TDHQSDhSUrHU4';
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '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';
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
@@ -93,7 +99,7 @@ export default function Chatbot() {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            model: 'llama-3.1-8b-instant', // Updated to the new working model
+            model: 'llama-3.1-8b-instant',
             messages: groqMessages
           })
         });
