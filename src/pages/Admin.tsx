@@ -368,6 +368,17 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
     if (!error) fetchData();
   }
 
+  async function handleDeleteAll() {
+    if (!confirm('Are you sure you want to delete ALL testimonials?')) return;
+    setLoading(true);
+    const { error } = await supabase.from('testimonials').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    if (!error) fetchData();
+    else {
+      alert(error.message);
+      setLoading(false);
+    }
+  }
+
   async function handleBulkAdd() {
     if (!confirm('Are you sure you want to add realistic testimonials?')) return;
     setLoading(true);
@@ -407,9 +418,14 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
   return (
     <div>
       {table === 'testimonials' && (
-        <button onClick={handleBulkAdd} className="btn-gradient text-sm py-2 px-4 mb-6">
-          Add Realistic Testimonials
-        </button>
+        <div className="flex gap-4 mb-6">
+          <button onClick={handleBulkAdd} className="btn-gradient text-sm py-2 px-4">
+            Add Realistic Testimonials
+          </button>
+          <button onClick={handleDeleteAll} className="bg-red-500 text-white text-sm py-2 px-4 rounded-lg hover:bg-red-600">
+            Delete All Testimonials
+          </button>
+        </div>
       )}
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
         {data.map((item) => (
@@ -418,13 +434,8 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
             <button onClick={() => onEdit(item)} className="p-2 bg-white dark:bg-black rounded-lg shadow-lg text-secondary/60 hover:text-primary"><Edit size={16} /></button>
             <button onClick={() => handleDelete(item.id)} className="p-2 bg-white dark:bg-black rounded-lg shadow-lg text-secondary/60 hover:text-red-500"><Trash2 size={16} /></button>
           </div>
-          <div className="aspect-video rounded-2xl bg-slate-100 dark:bg-white/5 mb-4 overflow-hidden">
-            <img 
-              src={item.thumbnail_url || item.image_url || item.image || item.photo || 'https://picsum.photos/seed/placeholder/400/225'} 
-              className="w-full h-full object-cover"
-              alt=""
-              referrerPolicy="no-referrer"
-            />
+          <div className="w-16 h-16 rounded-full bg-slate-200 dark:bg-white/10 mb-4 flex items-center justify-center text-2xl font-bold text-secondary/40">
+            {item.name.charAt(0).toUpperCase()}
           </div>
           <h4 className="font-bold mb-1 truncate">{item.title || item.name}</h4>
           <p className="text-xs text-secondary/40 dark:text-white/40 line-clamp-2">{item.description || item.feedback || item.bio || item.result}</p>
