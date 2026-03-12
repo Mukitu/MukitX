@@ -26,7 +26,8 @@ Rules:
 3. If asked about the owner, mention Mukitu Islam Nishat, his role as an International fellowship-awarded Software Developer.
 4. Always provide the contact number and location when asked about contact information.`;
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+const apiKey = process.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY || '';
+const ai = new GoogleGenAI({ apiKey });
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +54,8 @@ export default function Chatbot() {
       const response = await chat.current.sendMessage({ message: userMessage });
       setMessages(prev => [...prev, { role: 'ai', text: response.text || 'Sorry, I could not process that.' }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'ai', text: 'Sorry, I encountered an error.' }]);
+      console.error("Chatbot Error:", error);
+      setMessages(prev => [...prev, { role: 'ai', text: 'Sorry, I encountered an error. Please check if the API key is configured correctly.' }]);
     } finally {
       setIsLoading(false);
     }
