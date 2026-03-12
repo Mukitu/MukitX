@@ -450,6 +450,34 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
     }
   }
 
+  async function handleBulkAddCourses() {
+    if (!confirm('Are you sure you want to add 15 realistic courses?')) return;
+    setLoading(true);
+    const courses = [
+      { title: "Web Development with React", description: "Master modern web development with React and its ecosystem.", instructor: "John Doe", price: 5000, type: "recorded", duration: "12 Weeks" },
+      { title: "Digital Marketing Mastery", description: "Learn SEO, SEM, and social media marketing strategies.", instructor: "Jane Smith", price: 4500, type: "recorded", duration: "8 Weeks" },
+      { title: "UI/UX Design Fundamentals", description: "Design intuitive and beautiful user interfaces.", instructor: "Alex Johnson", price: 4000, type: "recorded", duration: "10 Weeks" },
+      { title: "Python for Data Science", description: "Analyze data and build models using Python.", instructor: "Michael Brown", price: 6000, type: "live", duration: "14 Weeks" },
+      { title: "Mobile App Development (Flutter)", description: "Build cross-platform mobile apps with Flutter.", instructor: "Sarah Davis", price: 5500, type: "live", duration: "12 Weeks" },
+      { title: "Advanced SEO Strategy", description: "Take your SEO skills to the next level.", instructor: "Robert Wilson", price: 3500, type: "recorded", duration: "6 Weeks" },
+      { title: "Full Stack MERN Development", description: "Become a full-stack developer with MERN stack.", instructor: "Emily White", price: 8000, type: "live", duration: "16 Weeks" },
+      { title: "Graphic Design Essentials", description: "Learn Adobe Photoshop and Illustrator.", instructor: "David Miller", price: 3000, type: "recorded", duration: "8 Weeks" },
+      { title: "Cyber Security Basics", description: "Understand the fundamentals of cyber security.", instructor: "Chris Taylor", price: 4500, type: "live", duration: "10 Weeks" },
+      { title: "Cloud Computing with AWS", description: "Master cloud infrastructure with AWS.", instructor: "Jessica Anderson", price: 7000, type: "live", duration: "12 Weeks" },
+      { title: "Content Writing & Copywriting", description: "Write compelling content for the web.", instructor: "Daniel Thomas", price: 2500, type: "recorded", duration: "4 Weeks" },
+      { title: "Data Analytics with Power BI", description: "Visualize data and gain insights with Power BI.", instructor: "Laura Martinez", price: 4000, type: "recorded", duration: "8 Weeks" },
+      { title: "Video Editing & Motion Graphics", description: "Create stunning videos and motion graphics.", instructor: "Kevin Garcia", price: 4500, type: "recorded", duration: "10 Weeks" },
+      { title: "Freelancing & Outsourcing", description: "Learn how to succeed as a freelancer.", instructor: "Maria Rodriguez", price: 2000, type: "recorded", duration: "4 Weeks" },
+      { title: "Business Strategy & Management", description: "Develop essential business management skills.", instructor: "James Wilson", price: 5000, type: "live", duration: "10 Weeks" }
+    ];
+    const { error } = await supabase.from('courses').insert(courses);
+    if (!error) fetchData();
+    else {
+      alert(error.message);
+      setLoading(false);
+    }
+  }
+
   if (loading) return <div className="py-20 flex justify-center"><Loader2 className="animate-spin text-primary" /></div>;
 
   return (
@@ -463,6 +491,11 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
             Delete All Testimonials
           </button>
         </div>
+      )}
+      {table === 'courses' && (
+        <button onClick={handleBulkAddCourses} className="btn-gradient text-sm py-2 px-4 mb-6">
+          Bulk Add 15 Courses
+        </button>
       )}
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
         {data.map((item) => (
