@@ -6,7 +6,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
+import { formatCurrency, cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -514,7 +514,7 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
 
 function OverviewTab() {
   const [stats, setStats] = useState([
-    { label: 'Total Revenue', value: '$0', change: '+0%', icon: CreditCard },
+    { label: 'Total Revenue', value: formatCurrency(0), change: '+0%', icon: CreditCard },
     { label: 'Active Students', value: '0', change: '+0%', icon: Users },
     { label: 'Course Sales', value: '0', change: '+0%', icon: BookOpen },
     { label: 'Product Sales', value: '0', change: '+0%', icon: ShoppingBag },
@@ -538,7 +538,7 @@ function OverviewTab() {
         const productSales = orders.filter(o => o.item_type === 'product' && o.status === 'approved').length;
 
         setStats([
-          { label: 'Total Revenue', value: `$${totalRevenue.toLocaleString()}`, change: '+12%', icon: CreditCard },
+          { label: 'Total Revenue', value: formatCurrency(totalRevenue), change: '+12%', icon: CreditCard },
           { label: 'Active Students', value: (userCount || 0).toString(), change: '+5%', icon: Users },
           { label: 'Course Sales', value: courseSales.toString(), change: '+8%', icon: BookOpen },
           { label: 'Product Sales', value: productSales.toString(), change: '+15%', icon: ShoppingBag },
@@ -616,7 +616,7 @@ function OverviewTab() {
                 <div>
                   <p className="font-bold text-sm">{order.profiles?.full_name || 'New Order'}</p>
                   <p className="text-xs text-secondary/40 dark:text-white/40">
-                    {order.item_name} - ${order.amount} - TRX: {order.transaction_id}
+                    {order.item_name} - {formatCurrency(order.amount)} - TRX: {order.transaction_id}
                   </p>
                 </div>
               </div>
@@ -654,7 +654,7 @@ function OverviewTab() {
                 <div>
                   <p className="font-bold text-sm">{activity.profiles?.full_name || 'New Order'}</p>
                   <p className="text-xs text-secondary/40 dark:text-white/40">
-                    Purchased {activity.item_name || 'a product'} for ${activity.amount}
+                    Purchased {activity.item_name || 'a product'} for {formatCurrency(activity.amount)}
                   </p>
                 </div>
               </div>
@@ -712,7 +712,7 @@ function PaymentsTab() {
             <tr key={p.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
               <td className="px-6 py-4 text-sm font-medium">{p.profiles?.full_name || 'Unknown'}</td>
               <td className="px-6 py-4 text-sm">{p.item_name}</td>
-              <td className="px-6 py-4 text-sm font-bold">${p.amount}</td>
+              <td className="px-6 py-4 text-sm font-bold">{formatCurrency(p.amount)}</td>
               <td className="px-6 py-4 text-sm font-mono">{p.transaction_id}</td>
               <td className="px-6 py-4">
                 <span className={cn(

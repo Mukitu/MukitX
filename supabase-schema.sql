@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS products (
 -- ORDERS & PAYMENTS
 CREATE TABLE IF NOT EXISTS orders (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users ON DELETE CASCADE,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
   item_id UUID NOT NULL,
   item_type TEXT CHECK (item_type IN ('course', 'product')),
   item_name TEXT NOT NULL,
@@ -216,8 +216,10 @@ BEGIN
     -- Orders
     DROP POLICY IF EXISTS "Users view own orders" ON orders;
     CREATE POLICY "Users view own orders" ON orders FOR SELECT USING (auth.uid() = user_id);
+    DROP POLICY IF EXISTS "Users insert own orders" ON orders;
+    CREATE POLICY "Users insert own orders" ON orders FOR INSERT WITH CHECK (auth.uid() = user_id);
     DROP POLICY IF EXISTS "Admin manage orders" ON orders;
-    CREATE POLICY "Admin manage orders" ON orders FOR ALL USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+    CREATE POLICY "Admin manage orders" ON orders FOR ALL USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')) WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 END $$;
 
 -- TRIGGER FUNCTION
