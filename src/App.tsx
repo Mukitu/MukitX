@@ -12,6 +12,10 @@ import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
 import { motion, AnimatePresence } from 'framer-motion';
 import TeamPage from './pages/TeamPage';
+import ServicesPage from './pages/ServicesPage';
+import PortfolioPage from './pages/PortfolioPage';
+import BlogPage from './pages/BlogPage';
+import ContactPage from './pages/ContactPage';
 import { AuthProvider } from './contexts/AuthContext';
 
 function Home() {
@@ -51,6 +55,10 @@ export default function App() {
                 <Route path="/dashboard" element={<UserDashboard />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/team" element={<TeamPage />} />
+                <Route path="/services" element={<ServicesPage />} />
+                <Route path="/portfolio" element={<PortfolioPage />} />
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/contact" element={<ContactPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
               </Routes>

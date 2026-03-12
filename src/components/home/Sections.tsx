@@ -356,8 +356,8 @@ export function Footer() {
             <h4 className="font-bold mb-6">Quick Links</h4>
             <ul className="space-y-4 text-secondary/60 dark:text-white/60">
               <li><Link to="/" className="hover:text-primary transition-colors">Home</Link></li>
-              <li><a href="#services" className="hover:text-primary transition-colors">Services</a></li>
-              <li><a href="#portfolio" className="hover:text-primary transition-colors">Portfolio</a></li>
+              <li><Link to="/services" className="hover:text-primary transition-colors">Services</Link></li>
+              <li><Link to="/portfolio" className="hover:text-primary transition-colors">Portfolio</Link></li>
               <li><Link to="/courses" className="hover:text-primary transition-colors">Courses</Link></li>
             </ul>
           </div>
