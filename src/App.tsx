@@ -17,6 +17,9 @@ import PortfolioPage from './pages/PortfolioPage';
 import BlogPage from './pages/BlogPage';
 import ContactPage from './pages/ContactPage';
 import { AuthProvider } from './contexts/AuthContext';
+import Chatbot from './components/Chatbot';
+
+import SEO from './components/SEO';
 
 function Home() {
   return (
@@ -25,6 +28,10 @@ function Home() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
+      <SEO 
+        title="Home" 
+        description="MukitX - Your partner for web development, mobile apps, and digital solutions."
+      />
       <div className="relative">
         <ThreeHero />
         <Hero />
@@ -65,6 +72,7 @@ export default function App() {
             </AnimatePresence>
           </main>
           <Footer />
+          <Chatbot />
         </div>
       </Router>
     </AuthProvider>
