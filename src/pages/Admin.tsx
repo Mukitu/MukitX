@@ -368,11 +368,35 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
     if (!error) fetchData();
   }
 
+  async function handleBulkAdd() {
+    if (!confirm('Are you sure you want to add 50 dummy testimonials?')) return;
+    setLoading(true);
+    const testimonials = Array.from({ length: 50 }, (_, i) => ({
+      name: `User ${i + 1}`,
+      profession: 'Customer',
+      country: 'Bangladesh',
+      feedback: `This is a great service! Testimonial number ${i + 1}.`,
+      photo: `https://picsum.photos/seed/${i + 1}/100/100`
+    }));
+    const { error } = await supabase.from('testimonials').insert(testimonials);
+    if (!error) fetchData();
+    else {
+      alert(error.message);
+      setLoading(false);
+    }
+  }
+
   if (loading) return <div className="py-20 flex justify-center"><Loader2 className="animate-spin text-primary" /></div>;
 
   return (
-    <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
-      {data.map((item) => (
+    <div>
+      {table === 'testimonials' && (
+        <button onClick={handleBulkAdd} className="btn-gradient text-sm py-2 px-4 mb-6">
+          Bulk Add 50 Testimonials
+        </button>
+      )}
+      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        {data.map((item) => (
         <div key={item.id} className="glass dark:glass-dark p-6 rounded-3xl group relative">
           <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button onClick={() => onEdit(item)} className="p-2 bg-white dark:bg-black rounded-lg shadow-lg text-secondary/60 hover:text-primary"><Edit size={16} /></button>
@@ -393,6 +417,7 @@ function DataManagementTab({ table, onEdit }: { table: string, onEdit: (item: an
       {data.length === 0 && (
         <div className="col-span-full py-20 text-center text-secondary/40">No items found. Click "Add New" to get started.</div>
       )}
+    </div>
     </div>
   );
 }
