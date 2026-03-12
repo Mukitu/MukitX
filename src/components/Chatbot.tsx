@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
 
 const SYSTEM_PROMPT = `You are MukitX AI assistant for the website. 
 Help visitors with services, courses, digital products, enrollment, and payment instructions. 
@@ -32,7 +32,6 @@ Rules:
 3. If asked about the owner, mention Mukitu Islam Nishat, his role as an International fellowship-awarded Software Developer.
 4. Always provide the contact number and location when asked about contact information.`;
 
-// এখানে আপনার নতুন Gemini API Key বসান
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyB5cKqVlPnOXUws8IZFj0TDHQSDhSUrHU4';
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || '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';
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
@@ -64,6 +63,7 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
+      // Format history for Gemini (roles must be 'user' or 'model')
       const contents = currentHistory
         .filter(m => m.text !== 'Hello! How can I help you with MukitX today?')
         .map(m => ({
@@ -142,7 +142,7 @@ export default function Chatbot() {
             </div>
             <div className="flex-grow overflow-y-auto p-4 space-y-4">
               {messages.map((m, i) => (
-                <div key={i} className={`p-3 rounded-lg text-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-primary/10 ml-auto max-w-[80%]' : 'bg-secondary/10 mr-auto max-w-[80%]'}`}>
+                <div key={i} className={`p-3 rounded-lg text-sm ${m.role === 'user' ? 'bg-primary/10 ml-auto max-w-[80%]' : 'bg-secondary/10 mr-auto max-w-[80%]'}`}>
                   {m.text}
                 </div>
               ))}
