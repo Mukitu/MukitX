@@ -17,6 +17,7 @@ export default function CourseDetailPage() {
   const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPurchased, setIsPurchased] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState({ number: '', transactionId: '' });
   const [paymentNumbers, setPaymentNumbers] = useState({ bkash: '', rocket: '' });
@@ -45,14 +46,21 @@ export default function CourseDetailPage() {
       }
 
       if (user) {
-        const { data: order } = await supabase
+        const { data: orders } = await supabase
           .from('orders')
           .select('*')
           .eq('user_id', user.id)
           .eq('item_id', id)
-          .eq('status', 'approved')
-          .single();
-        if (order) setIsPurchased(true);
+          .order('created_at', { ascending: false });
+          
+        if (orders && orders.length > 0) {
+          const latestOrder = orders[0];
+          if (latestOrder.status === 'approved') {
+            setIsPurchased(true);
+          } else if (latestOrder.status === 'pending') {
+            setIsPending(true);
+          }
+        }
       }
     } catch (error) {
       console.error('Error:', error);
@@ -64,6 +72,10 @@ export default function CourseDetailPage() {
   const handleEnroll = () => {
     if (!user) {
       navigate('/login');
+      return;
+    }
+    if (isPending) {
+      alert('Your previous order is still pending approval. Please wait.');
       return;
     }
     setShowPaymentModal(true);
@@ -114,7 +126,13 @@ export default function CourseDetailPage() {
                   <Lock size={48} className="mb-4 text-primary" />
                   <h3 className="text-2xl font-bold mb-2">Course Content Locked</h3>
                   <p className="text-white/60 mb-6">Enroll in this course to get full access to all lessons and materials.</p>
-                  <button onClick={handleEnroll} className="btn-gradient px-8 py-3 rounded-2xl">Enroll Now</button>
+                  <button 
+                    onClick={handleEnroll} 
+                    disabled={isPending}
+                    className="btn-gradient px-8 py-3 rounded-2xl disabled:opacity-50"
+                  >
+                    {isPending ? 'Approval Pending' : 'Enroll Now'}
+                  </button>
                 </div>
               )}
             </div>

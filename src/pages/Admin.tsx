@@ -523,55 +523,64 @@ function OverviewTab() {
   const [pendingOrders, setPendingOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchOverviewData() {
-      try {
-        // Fetch stats
-        const { data: orders } = await supabase.from('orders').select('amount, status, item_type');
-        const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+  const fetchOverviewData = async () => {
+    try {
+      // Fetch stats
+      const { data: orders } = await supabase.from('orders').select('amount, status, item_type');
+      const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+      
+      if (orders) {
+        const totalRevenue = orders
+          .filter(o => o.status === 'approved')
+          .reduce((acc, curr) => acc + (curr.amount || 0), 0);
         
-        if (orders) {
-          const totalRevenue = orders
-            .filter(o => o.status === 'approved')
-            .reduce((acc, curr) => acc + (curr.amount || 0), 0);
-          
-          const courseSales = orders.filter(o => o.item_type === 'course' && o.status === 'approved').length;
-          const productSales = orders.filter(o => o.item_type === 'product' && o.status === 'approved').length;
+        const courseSales = orders.filter(o => o.item_type === 'course' && o.status === 'approved').length;
+        const productSales = orders.filter(o => o.item_type === 'product' && o.status === 'approved').length;
 
-          setStats([
-            { label: 'Total Revenue', value: `$${totalRevenue.toLocaleString()}`, change: '+12%', icon: CreditCard },
-            { label: 'Active Students', value: (userCount || 0).toString(), change: '+5%', icon: Users },
-            { label: 'Course Sales', value: courseSales.toString(), change: '+8%', icon: BookOpen },
-            { label: 'Product Sales', value: productSales.toString(), change: '+15%', icon: ShoppingBag },
-          ]);
-        }
-
-        // Fetch recent activity
-        const { data: recent } = await supabase
-          .from('orders')
-          .select('*, profiles(full_name)')
-          .order('created_at', { ascending: false })
-          .limit(5);
-        
-        if (recent) setRecentActivity(recent);
-
-        // Fetch pending orders
-        const { data: pending } = await supabase
-          .from('orders')
-          .select('*, profiles(full_name)')
-          .eq('status', 'pending')
-          .order('created_at', { ascending: false });
-        
-        if (pending) setPendingOrders(pending);
-      } catch (error) {
-        console.error('Error fetching overview data:', error);
-      } finally {
-        setLoading(false);
+        setStats([
+          { label: 'Total Revenue', value: `$${totalRevenue.toLocaleString()}`, change: '+12%', icon: CreditCard },
+          { label: 'Active Students', value: (userCount || 0).toString(), change: '+5%', icon: Users },
+          { label: 'Course Sales', value: courseSales.toString(), change: '+8%', icon: BookOpen },
+          { label: 'Product Sales', value: productSales.toString(), change: '+15%', icon: ShoppingBag },
+        ]);
       }
-    }
 
+      // Fetch recent activity
+      const { data: recent } = await supabase
+        .from('orders')
+        .select('*, profiles(full_name)')
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      if (recent) setRecentActivity(recent);
+
+      // Fetch pending orders
+      const { data: pending } = await supabase
+        .from('orders')
+        .select('*, profiles(full_name)')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+      
+      if (pending) setPendingOrders(pending);
+    } catch (error) {
+      console.error('Error fetching overview data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchOverviewData();
   }, []);
+
+  const updateOrderStatus = async (id: string, status: string) => {
+    const { error } = await supabase.from('orders').update({ status }).eq('id', id);
+    if (!error) {
+      fetchOverviewData();
+    } else {
+      alert(error.message);
+    }
+  };
 
   if (loading) return <div className="py-20 flex justify-center"><Loader2 className="animate-spin text-primary" /></div>;
 
@@ -611,9 +620,20 @@ function OverviewTab() {
                   </p>
                 </div>
               </div>
-              <a href="#payments" onClick={() => window.location.hash = 'payments'} className="text-xs font-bold uppercase tracking-wider text-primary hover:underline">
-                Approve
-              </a>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => updateOrderStatus(order.id, 'approved')} 
+                  className="text-xs font-bold uppercase tracking-wider text-green-500 hover:text-green-600 bg-green-500/10 hover:bg-green-500/20 px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  Approve
+                </button>
+                <button 
+                  onClick={() => updateOrderStatus(order.id, 'rejected')} 
+                  className="text-xs font-bold uppercase tracking-wider text-red-500 hover:text-red-600 bg-red-500/10 hover:bg-red-500/20 px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  Reject
+                </button>
+              </div>
             </div>
           ))}
           {pendingOrders.length === 0 && (

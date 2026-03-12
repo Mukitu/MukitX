@@ -16,6 +16,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isPurchased, setIsPurchased] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState({ number: '', transactionId: '' });
   const [paymentNumbers, setPaymentNumbers] = useState({ bkash: '', rocket: '' });
@@ -42,14 +43,21 @@ export default function ProductDetailPage() {
       }
 
       if (user) {
-        const { data: order } = await supabase
+        const { data: orders } = await supabase
           .from('orders')
           .select('*')
           .eq('user_id', user.id)
           .eq('item_id', id)
-          .eq('status', 'approved')
-          .single();
-        if (order) setIsPurchased(true);
+          .order('created_at', { ascending: false });
+          
+        if (orders && orders.length > 0) {
+          const latestOrder = orders[0];
+          if (latestOrder.status === 'approved') {
+            setIsPurchased(true);
+          } else if (latestOrder.status === 'pending') {
+            setIsPending(true);
+          }
+        }
       }
     } catch (error) {
       console.error('Error:', error);
@@ -61,6 +69,10 @@ export default function ProductDetailPage() {
   const handleBuy = () => {
     if (!user) {
       navigate('/login');
+      return;
+    }
+    if (isPending) {
+      alert('Your previous order is still pending approval. Please wait.');
       return;
     }
     setShowPaymentModal(true);
@@ -141,10 +153,10 @@ export default function ProductDetailPage() {
               <div className="text-3xl font-bold text-primary mb-6">{formatCurrency(product.price)}</div>
               <button 
                 onClick={handleBuy}
-                disabled={isPurchased}
+                disabled={isPurchased || isPending}
                 className="w-full btn-gradient py-4 rounded-2xl font-bold mb-6 disabled:opacity-50"
               >
-                {isPurchased ? 'Already Purchased' : 'Buy Now'}
+                {isPurchased ? 'Already Purchased' : isPending ? 'Approval Pending' : 'Buy Now'}
               </button>
               
               <div className="space-y-4">
