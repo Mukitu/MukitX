@@ -149,51 +149,68 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
   );
 }
 
+import * as Icons from 'lucide-react';
+
 export function Services() {
-  const services = [
-    { 
-      icon: Globe, 
-      title: "Website Design", 
-      desc: "We create stunning, responsive websites that capture your brand's essence and drive conversions.",
-      link: "/services/website-design"
-    },
-    { 
-      icon: Smartphone, 
-      title: "App Development", 
-      desc: "High-performance iOS and Android mobile applications built with cutting-edge technologies.",
-      link: "/services/app-development"
-    },
-    { 
-      icon: ShoppingBag, 
-      title: "Ecommerce Development", 
-      desc: "Robust, scalable online stores designed to maximize sales and provide seamless shopping experiences.",
-      link: "/services/ecommerce-development"
-    },
-    { 
-      icon: Layout, 
-      title: "Brand Identity", 
-      desc: "Crafting memorable logos, color palettes, and visual guidelines that define your unique brand.",
-      link: "/services/brand-identity"
-    },
-    { 
-      icon: Share2, 
-      title: "Social Media Design", 
-      desc: "Engaging graphics and visual content tailored for various social media platforms to boost engagement.",
-      link: "/services/social-media-design"
-    },
-    { 
-      icon: Search, 
-      title: "SEO Optimization", 
-      desc: "Data-driven strategies to improve your website's visibility and ranking on search engines.",
-      link: "/services/seo-optimization"
-    },
-    { 
-      icon: Video, 
-      title: "Video Editing", 
-      desc: "Professional video editing services to create compelling visual stories for your brand.",
-      link: "/services/video-editing"
-    },
-  ];
+  const [services, setServices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchServices() {
+      const { data } = await supabase.from('services').select('*').order('created_at');
+      if (data && data.length > 0) {
+        setServices(data);
+      } else {
+        // Fallback data if table is empty or doesn't exist yet
+        setServices([
+          { 
+            icon: 'Globe', 
+            title: "Website Design", 
+            short_description: "We create stunning, responsive websites that capture your brand's essence and drive conversions.",
+            slug: "website-design"
+          },
+          { 
+            icon: 'Smartphone', 
+            title: "App Development", 
+            short_description: "High-performance iOS and Android mobile applications built with cutting-edge technologies.",
+            slug: "app-development"
+          },
+          { 
+            icon: 'ShoppingBag', 
+            title: "Ecommerce Development", 
+            short_description: "Robust, scalable online stores designed to maximize sales and provide seamless shopping experiences.",
+            slug: "ecommerce-development"
+          },
+          { 
+            icon: 'Layout', 
+            title: "Brand Identity", 
+            short_description: "Crafting memorable logos, color palettes, and visual guidelines that define your unique brand.",
+            slug: "brand-identity"
+          },
+          { 
+            icon: 'Share2', 
+            title: "Social Media Design", 
+            short_description: "Engaging graphics and visual content tailored for various social media platforms to boost engagement.",
+            slug: "social-media-design"
+          },
+          { 
+            icon: 'Search', 
+            title: "SEO Optimization", 
+            short_description: "Data-driven strategies to improve your website's visibility and ranking on search engines.",
+            slug: "seo-optimization"
+          },
+          { 
+            icon: 'Video', 
+            title: "Video Editing", 
+            short_description: "Professional video editing services to create compelling visual stories for your brand.",
+            slug: "video-editing"
+          },
+        ]);
+      }
+      setLoading(false);
+    }
+    fetchServices();
+  }, []);
 
   return (
     <section id="services" className="py-24">
@@ -204,26 +221,36 @@ export function Services() {
             We provide end-to-end digital solutions to help your business thrive in the modern tech landscape.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {services.map((service, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ y: -10 }}
-              className="glass dark:glass-dark p-8 rounded-3xl hover:border-primary/50 transition-all group flex flex-col h-full"
-            >
-              <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-all">
-                <service.icon size={24} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">{service.title}</h3>
-              <p className="text-secondary/60 dark:text-white/60 leading-relaxed line-clamp-2 mb-6 flex-grow">
-                {service.desc}
-              </p>
-              <Link to={service.link} className="flex items-center gap-2 text-primary font-bold group/btn mt-auto">
-                Learn More <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+        
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="animate-spin text-primary w-8 h-8" />
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-3 gap-8">
+            {services.map((service, i) => {
+              const IconComponent = (Icons as any)[service.icon] || Icons.Globe;
+              return (
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -10 }}
+                  className="glass dark:glass-dark p-8 rounded-3xl hover:border-primary/50 transition-all group flex flex-col h-full"
+                >
+                  <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-all">
+                    <IconComponent size={24} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">{service.title}</h3>
+                  <p className="text-secondary/60 dark:text-white/60 leading-relaxed line-clamp-2 mb-6 flex-grow">
+                    {service.short_description}
+                  </p>
+                  <Link to={`/services/${service.slug}`} className="flex items-center gap-2 text-primary font-bold group/btn mt-auto">
+                    Learn More <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );

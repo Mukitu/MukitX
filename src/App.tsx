@@ -13,6 +13,7 @@ import RegisterPage from './pages/Register';
 import { motion, AnimatePresence } from 'framer-motion';
 import TeamPage from './pages/TeamPage';
 import ServicesPage from './pages/ServicesPage';
+import ServiceDetail from './pages/ServiceDetail';
 import PortfolioPage from './pages/PortfolioPage';
 import BlogPage from './pages/BlogPage';
 import ContactPage from './pages/ContactPage';
@@ -63,6 +64,7 @@ export default function App() {
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/team" element={<TeamPage />} />
                 <Route path="/services" element={<ServicesPage />} />
+                <Route path="/services/:slug" element={<ServiceDetail />} />
                 <Route path="/portfolio" element={<PortfolioPage />} />
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/contact" element={<ContactPage />} />

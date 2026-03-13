@@ -3,7 +3,7 @@ import {
   LayoutDashboard, BookOpen, ShoppingBag, CreditCard, 
   Users, Settings, Plus, Check, X, Edit, Trash2,
   Briefcase, MessageSquare, UserPlus, Loader2, Image as ImageIcon,
-  LogOut, Calendar
+  LogOut, Calendar, Layout
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { formatCurrency, cn } from '@/lib/utils';
@@ -16,6 +16,7 @@ const sidebarItems = [
   { icon: BookOpen, label: 'Courses', id: 'courses' },
   { icon: ShoppingBag, label: 'Products', id: 'products' },
   { icon: Briefcase, label: 'Portfolio', id: 'portfolio' },
+  { icon: Layout, label: 'Services', id: 'services' },
   { icon: MessageSquare, label: 'Blog', id: 'blog' },
   { icon: MessageSquare, label: 'Testimonials', id: 'testimonials' },
   { icon: UserPlus, label: 'Team', id: 'team' },
@@ -121,6 +122,7 @@ export default function AdminDashboard() {
               {activeTab === 'courses' && <DataManagementTab table="courses" onEdit={handleEdit} />}
               {activeTab === 'products' && <DataManagementTab table="products" onEdit={handleEdit} />}
               {activeTab === 'portfolio' && <DataManagementTab table="portfolio_projects" onEdit={handleEdit} />}
+              {activeTab === 'services' && <DataManagementTab table="services" onEdit={handleEdit} />}
               {activeTab === 'blog' && <DataManagementTab table="blog_posts" onEdit={handleEdit} />}
               {activeTab === 'testimonials' && <DataManagementTab table="testimonials" onEdit={handleEdit} />}
               {activeTab === 'team' && <DataManagementTab table="team_members" onEdit={handleEdit} />}
@@ -201,6 +203,7 @@ function DynamicForm({ type, initialData, onSuccess }: { type: string, initialDa
       case 'courses': table = 'courses'; break;
       case 'products': table = 'products'; break;
       case 'portfolio': table = 'portfolio_projects'; break;
+      case 'services': table = 'services'; break;
       case 'blog': table = 'blog_posts'; break;
       case 'testimonials': table = 'testimonials'; break;
       case 'team': table = 'team_members'; break;
@@ -274,6 +277,16 @@ function DynamicForm({ type, initialData, onSuccess }: { type: string, initialDa
             <Input label="Category" name="category" value={formData.category} onChange={setFormData} />
             <Input label="Image URL" name="image" value={formData.image} onChange={setFormData} />
             <Input label="Project Link" name="link" value={formData.link} onChange={setFormData} />
+          </>
+        );
+      case 'services':
+        return (
+          <>
+            <Input label="Title" name="title" value={formData.title} onChange={setFormData} />
+            <Input label="Slug (e.g., website-design)" name="slug" value={formData.slug} onChange={setFormData} />
+            <Input label="Icon Name (e.g., Globe, Smartphone)" name="icon" value={formData.icon} onChange={setFormData} />
+            <Input label="Short Description (2 lines for card)" name="short_description" value={formData.short_description} isTextArea onChange={setFormData} />
+            <Input label="Full Description (For Learn More page)" name="full_description" value={formData.full_description} isTextArea onChange={setFormData} />
           </>
         );
       case 'blog':
