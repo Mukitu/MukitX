@@ -3,7 +3,8 @@ import { useInView } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 import { 
   Globe, Cpu, Layout, Smartphone, Zap, BarChart, 
-  CheckCircle, ArrowRight, Star, Quote, Github, Twitter, Linkedin, Loader2 
+  CheckCircle, ArrowRight, Star, Quote, Github, Twitter, Linkedin, Loader2,
+  ShoppingBag, Share2, Search, Video
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
@@ -150,12 +151,48 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
 
 export function Services() {
   const services = [
-    { icon: Globe, title: "Web Development", desc: "Modern, fast, and SEO-friendly websites built with the latest technologies." },
-    { icon: Cpu, title: "SaaS Development", desc: "Scalable multi-tenant software solutions for your business needs." },
-    { icon: Layout, title: "UI UX Design", desc: "Apple-level premium designs that focus on user experience and aesthetics." },
-    { icon: Smartphone, title: "Mobile App Development", desc: "High-performance iOS and Android apps using React Native." },
-    { icon: Zap, title: "Automation Tools", desc: "Custom scripts and tools to automate your repetitive business tasks." },
-    { icon: BarChart, title: "Digital Marketing", desc: "Data-driven strategies to grow your online presence and sales." },
+    { 
+      icon: Globe, 
+      title: "Website Design", 
+      desc: "We create stunning, responsive websites that capture your brand's essence and drive conversions.",
+      link: "/services/website-design"
+    },
+    { 
+      icon: Smartphone, 
+      title: "App Development", 
+      desc: "High-performance iOS and Android mobile applications built with cutting-edge technologies.",
+      link: "/services/app-development"
+    },
+    { 
+      icon: ShoppingBag, 
+      title: "Ecommerce Development", 
+      desc: "Robust, scalable online stores designed to maximize sales and provide seamless shopping experiences.",
+      link: "/services/ecommerce-development"
+    },
+    { 
+      icon: Layout, 
+      title: "Brand Identity", 
+      desc: "Crafting memorable logos, color palettes, and visual guidelines that define your unique brand.",
+      link: "/services/brand-identity"
+    },
+    { 
+      icon: Share2, 
+      title: "Social Media Design", 
+      desc: "Engaging graphics and visual content tailored for various social media platforms to boost engagement.",
+      link: "/services/social-media-design"
+    },
+    { 
+      icon: Search, 
+      title: "SEO Optimization", 
+      desc: "Data-driven strategies to improve your website's visibility and ranking on search engines.",
+      link: "/services/seo-optimization"
+    },
+    { 
+      icon: Video, 
+      title: "Video Editing", 
+      desc: "Professional video editing services to create compelling visual stories for your brand.",
+      link: "/services/video-editing"
+    },
   ];
 
   return (
@@ -172,15 +209,18 @@ export function Services() {
             <motion.div
               key={i}
               whileHover={{ y: -10 }}
-              className="glass dark:glass-dark p-8 rounded-3xl hover:border-primary/50 transition-all group"
+              className="glass dark:glass-dark p-8 rounded-3xl hover:border-primary/50 transition-all group flex flex-col h-full"
             >
               <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-all">
                 <service.icon size={24} />
               </div>
               <h3 className="text-xl font-bold mb-3">{service.title}</h3>
-              <p className="text-secondary/60 dark:text-white/60 leading-relaxed">
+              <p className="text-secondary/60 dark:text-white/60 leading-relaxed line-clamp-2 mb-6 flex-grow">
                 {service.desc}
               </p>
+              <Link to={service.link} className="flex items-center gap-2 text-primary font-bold group/btn mt-auto">
+                Learn More <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+              </Link>
             </motion.div>
           ))}
         </div>
