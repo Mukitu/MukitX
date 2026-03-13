@@ -20,41 +20,70 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 text-center z-10">
-        <motion.h1 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-6"
-        >
-          We help businesses grow with <br />
-          <span className="text-primary">High-converting Websites</span> <br />
-          & Creative Design
-        </motion.h1>
-        <motion.p 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-          className="text-xl text-secondary/70 dark:text-white/70 max-w-2xl mx-auto mb-10 font-medium tracking-wide"
+          transition={{ duration: 1 }}
         >
-          Web Design • Branding • Social Media • Development
-        </motion.p>
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <Link to="/contact" className="btn-gradient text-lg px-8 py-4 w-full sm:w-auto text-center">
-            Get a Free Consultation
-          </Link>
-          <Link to="/portfolio" className="px-8 py-4 rounded-full border border-secondary/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all font-medium w-full sm:w-auto text-center">
-            View Portfolio
-          </Link>
-          <Link to="/courses" className="px-8 py-4 rounded-full border border-secondary/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all font-medium w-full sm:w-auto text-center">
-            Get Started
-          </Link>
+          <motion.div
+            initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <motion.h1 
+              className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-8 leading-[1.1]"
+            >
+              <span className="inline-block text-white/90">We help businesses grow with</span> <br />
+              <motion.span 
+                initial={{ backgroundPosition: '0% 50%' }}
+                animate={{ backgroundPosition: '100% 50%' }}
+                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                className="relative inline-block bg-gradient-to-r from-primary via-blue-400 to-primary bg-[length:200%_auto] bg-clip-text text-transparent"
+              >
+                High-converting Websites
+              </motion.span> <br />
+              <span className="inline-block text-white/90">& Creative Design</span>
+            </motion.h1>
+          </motion.div>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 1, ease: "easeOut" }}
+            className="text-xl md:text-2xl text-white/50 max-w-3xl mx-auto mb-12 font-medium tracking-[0.2em] uppercase"
+          >
+            Web Design • Branding • Social Media • Development
+          </motion.p>
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-6"
+          >
+            <Link to="/contact" className="group relative overflow-hidden btn-gradient text-lg px-10 py-5 w-full sm:w-auto text-center shadow-2xl shadow-primary/20">
+              <span className="relative z-10">Get a Free Consultation</span>
+              <motion.div 
+                className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"
+              />
+            </Link>
+            <Link to="/portfolio" className="px-10 py-5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 backdrop-blur-md transition-all duration-500 font-medium w-full sm:w-auto text-center text-white/80 hover:text-white">
+              View Portfolio
+            </Link>
+            <Link to="/courses" className="px-10 py-5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 backdrop-blur-md transition-all duration-500 font-medium w-full sm:w-auto text-center text-white/80 hover:text-white">
+              Get Started
+            </Link>
+          </motion.div>
         </motion.div>
       </div>
+      
+      {/* Presentation Elements */}
+      <div className="absolute top-1/4 left-10 w-px h-32 bg-gradient-to-b from-transparent via-primary/50 to-transparent hidden lg:block" />
+      <div className="absolute top-1/4 right-10 w-px h-32 bg-gradient-to-b from-transparent via-primary/50 to-transparent hidden lg:block" />
+      <div className="absolute bottom-1/4 left-10 w-32 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent hidden lg:block" />
+      <div className="absolute bottom-1/4 right-10 w-32 h-px bg-gradient-to-l from-transparent via-primary/50 to-transparent hidden lg:block" />
+      
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none" />
     </section>
   );
 }
