@@ -1,160 +1,107 @@
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Points, PointMaterial, Float, OrbitControls, Text, MeshDistortMaterial } from '@react-three/drei';
-import { useRef, useMemo, Suspense } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Points, PointMaterial, Float, OrbitControls } from '@react-three/drei';
+import { useRef, useMemo, useState, Suspense } from 'react';
 import * as THREE from 'three';
 
-function FloatingUIPanel({ position, rotation, title, color }: any) {
-  return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-      <group position={position} rotation={rotation}>
-        {/* Glass Panel */}
-        <mesh>
-          <planeGeometry args={[2.8, 1.8]} />
-          <meshPhysicalMaterial 
-            transparent 
-            opacity={0.15} 
-            roughness={0.05} 
-            metalness={0.2} 
-            transmission={0.8} 
-            thickness={1}
-            color={color}
-          />
-        </mesh>
-        {/* Header Bar */}
-        <mesh position={[0, 0.75, 0.01]}>
-          <planeGeometry args={[2.8, 0.3]} />
-          <meshBasicMaterial color={color} transparent opacity={0.3} />
-        </mesh>
-        {/* Window Controls */}
-        <mesh position={[-1.1, 0.75, 0.02]}>
-          <circleGeometry args={[0.05, 32]} />
-          <meshBasicMaterial color="#ff5f56" />
-        </mesh>
-        <mesh position={[-0.95, 0.75, 0.02]}>
-          <circleGeometry args={[0.05, 32]} />
-          <meshBasicMaterial color="#ffbd2e" />
-        </mesh>
-        <mesh position={[-0.8, 0.75, 0.02]}>
-          <circleGeometry args={[0.05, 32]} />
-          <meshBasicMaterial color="#27c93f" />
-        </mesh>
-        {/* Content Title */}
-        <Text
-          position={[0, 0.2, 0.05]}
-          fontSize={0.18}
-          color="white"
-          maxWidth={2}
-          textAlign="center"
-          font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff"
-        >
-          {title}
-        </Text>
-        {/* Decorative Lines (Code-like) */}
-        {[...Array(5)].map((_, i) => (
-          <mesh key={i} position={[0, -0.2 - i * 0.15, 0.02]}>
-            <planeGeometry args={[2.2 - Math.random() * 0.5, 0.03]} />
-            <meshBasicMaterial color="white" transparent opacity={0.1} />
-          </mesh>
-        ))}
-      </group>
-    </Float>
-  );
-}
-
-function DigitalCore() {
-  const ref = useRef<THREE.Group>(null);
+function ParticleConstellation() {
+  const ref = useRef<THREE.Points>(null);
   
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = state.clock.getElapsedTime() * 0.2;
-    }
-  });
-
-  return (
-    <group ref={ref}>
-      <mesh>
-        <icosahedronGeometry args={[1, 2]} />
-        <meshStandardMaterial color="#3B82F6" wireframe transparent opacity={0.4} />
-      </mesh>
-      <mesh scale={0.8}>
-        <icosahedronGeometry args={[1, 1]} />
-        <MeshDistortMaterial color="#60A5FA" distort={0.3} speed={2} />
-      </mesh>
-    </group>
-  );
-}
-
-function Particles() {
-  const count = 1500;
+  // Generate random points for the constellation
+  const count = 2000;
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
+      pos[i * 3] = (Math.random() - 0.5) * 15;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 15;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 15;
     }
     return pos;
   }, []);
 
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.y = state.clock.getElapsedTime() * 0.05;
+      ref.current.rotation.x = state.clock.getElapsedTime() * 0.03;
+    }
+  });
+
   return (
-    <Points positions={positions} stride={3}>
-      <PointMaterial
-        transparent
-        color="#3B82F6"
-        size={0.03}
-        sizeAttenuation={true}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
+    <group>
+      <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
+        <PointMaterial
+          transparent
+          color="#3B82F6"
+          size={0.05}
+          sizeAttenuation={true}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </Points>
+      
+      {/* Central Glowing Core */}
+      <Float speed={2} rotationIntensity={2} floatIntensity={2}>
+        <mesh>
+          <icosahedronGeometry args={[1, 15]} />
+          <meshStandardMaterial 
+            color="#60A5FA" 
+            wireframe 
+            transparent 
+            opacity={0.3} 
+            emissive="#3B82F6"
+            emissiveIntensity={2}
+          />
+        </mesh>
+      </Float>
+
+      {/* Secondary Floating Elements */}
+      <Float speed={1.5} rotationIntensity={1} floatIntensity={1}>
+        <mesh position={[4, 2, -2]}>
+          <octahedronGeometry args={[0.5, 0]} />
+          <meshStandardMaterial color="#93C5FD" wireframe />
+        </mesh>
+      </Float>
+
+      <Float speed={1.8} rotationIntensity={1.5} floatIntensity={1.2}>
+        <mesh position={[-4, -2, -1]}>
+          <tetrahedronGeometry args={[0.4, 0]} />
+          <meshStandardMaterial color="#2563EB" wireframe />
+        </mesh>
+      </Float>
+    </group>
+  );
+}
+
+function Scene() {
+  return (
+    <>
+      <ambientLight intensity={0.2} />
+      <pointLight position={[10, 10, 10]} intensity={1} color="#3B82F6" />
+      <pointLight position={[-10, -10, -10]} intensity={0.5} color="#1D4ED8" />
+      <spotLight 
+        position={[0, 5, 10]} 
+        angle={0.3} 
+        penumbra={1} 
+        intensity={2} 
+        castShadow 
+        color="#60A5FA"
       />
-    </Points>
+      <ParticleConstellation />
+      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+    </>
   );
 }
 
 export default function ThreeHero() {
   return (
-    <div className="absolute inset-0 -z-10 bg-slate-950">
+    <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-950 via-blue-950 to-slate-950">
       <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
-        <ambientLight intensity={0.4} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} color="#3B82F6" />
-        <spotLight position={[0, 5, 10]} angle={0.3} penumbra={1} intensity={2} color="#60A5FA" />
-        
         <Suspense fallback={null}>
-          <Particles />
-          <DigitalCore />
-          
-          {/* Floating "Software" UI Panels */}
-          <FloatingUIPanel 
-            position={[-3.5, 1.5, 0]} 
-            rotation={[0, 0.4, 0]} 
-            title="User Interface Design" 
-            color="#3B82F6"
-          />
-          <FloatingUIPanel 
-            position={[3.5, -1.5, -1]} 
-            rotation={[0, -0.4, 0]} 
-            title="Cloud Infrastructure" 
-            color="#60A5FA"
-          />
-          <FloatingUIPanel 
-            position={[2.5, 2, -2]} 
-            rotation={[0.2, -0.2, 0]} 
-            title="Data Analytics" 
-            color="#2563EB"
-          />
-          <FloatingUIPanel 
-            position={[-2.5, -2.5, -1.5]} 
-            rotation={[-0.2, 0.2, 0]} 
-            title="Mobile App Dev" 
-            color="#1D4ED8"
-          />
+          <Scene />
         </Suspense>
-
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
       </Canvas>
       
-      {/* Cinematic Overlays */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(2,6,23,0.8)_100%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-transparent to-slate-950/80 pointer-events-none" />
+      {/* Overlay Gradients for depth */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-transparent via-slate-950/50 to-slate-950 pointer-events-none" />
     </div>
   );
 }
