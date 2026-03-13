@@ -59,21 +59,55 @@ export function Hero() {
 }
 
 export function Stats() {
-  const stats = [
-    { label: "Projects Completed", value: 150, suffix: "+" },
-    { label: "Professional Developers", value: 20, suffix: "+" },
-    { label: "Students", value: 10000, suffix: "+" },
-    { label: "Digital Products", value: 25, suffix: "+" },
-  ];
+  const [stats, setStats] = useState([
+    { label: "projects", value: 120, suffix: "+" },
+    { label: "clients", value: 60, suffix: "+" },
+    { label: "countries", value: 8, suffix: "" },
+  ]);
+  const [trustedText, setTrustedText] = useState("Trusted by 120+ clients worldwide");
+
+  useEffect(() => {
+    supabase.from('settings').select('*').then(({ data }) => {
+      if (data) {
+        const getSetting = (key: string, defaultVal: string) => {
+          const setting = data.find(s => s.key === key);
+          return setting ? setting.value : defaultVal;
+        };
+
+        setTrustedText(getSetting('stats_trusted_text', "Trusted by 120+ clients worldwide"));
+        
+        setStats([
+          { 
+            label: getSetting('stats_projects_label', "projects"), 
+            value: parseInt(getSetting('stats_projects_value', "120")) || 120, 
+            suffix: getSetting('stats_projects_suffix', "+") 
+          },
+          { 
+            label: getSetting('stats_clients_label', "clients"), 
+            value: parseInt(getSetting('stats_clients_value', "60")) || 60, 
+            suffix: getSetting('stats_clients_suffix', "+") 
+          },
+          { 
+            label: getSetting('stats_countries_label', "countries"), 
+            value: parseInt(getSetting('stats_countries_value', "8")) || 8, 
+            suffix: getSetting('stats_countries_suffix', "") 
+          },
+        ]);
+      }
+    });
+  }, []);
 
   return (
     <section className="py-20 bg-white dark:bg-dark-bg/50">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary">{trustedText}</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto border-y border-secondary/10 dark:border-white/10 py-12">
           {stats.map((stat, i) => (
             <div key={i} className="text-center">
               <Counter value={stat.value} suffix={stat.suffix} />
-              <p className="text-secondary/60 dark:text-white/60 font-medium">{stat.label}</p>
+              <p className="text-secondary/60 dark:text-white/60 font-medium text-lg uppercase tracking-wider">{stat.label}</p>
             </div>
           ))}
         </div>

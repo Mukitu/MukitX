@@ -794,7 +794,29 @@ function SettingsTab() {
 
   async function fetchSettings() {
     const { data } = await supabase.from('settings').select('*').order('key');
-    if (data) setSettings(data);
+    if (data) {
+      setSettings(data);
+      
+      // Auto-seed stats settings if they don't exist
+      const hasStatsSettings = data.some(s => s.key === 'stats_trusted_text');
+      if (!hasStatsSettings) {
+        const defaultStats = [
+          { key: 'stats_trusted_text', value: 'Trusted by 120+ clients worldwide', description: 'Heading for the stats section' },
+          { key: 'stats_projects_value', value: '120', description: 'Number of projects' },
+          { key: 'stats_projects_suffix', value: '+', description: 'Suffix for projects (e.g., +)' },
+          { key: 'stats_projects_label', value: 'projects', description: 'Label for projects' },
+          { key: 'stats_clients_value', value: '60', description: 'Number of clients' },
+          { key: 'stats_clients_suffix', value: '+', description: 'Suffix for clients' },
+          { key: 'stats_clients_label', value: 'clients', description: 'Label for clients' },
+          { key: 'stats_countries_value', value: '8', description: 'Number of countries' },
+          { key: 'stats_countries_suffix', value: '', description: 'Suffix for countries' },
+          { key: 'stats_countries_label', value: 'countries', description: 'Label for countries' }
+        ];
+        await supabase.from('settings').upsert(defaultStats);
+        const { data: newData } = await supabase.from('settings').select('*').order('key');
+        if (newData) setSettings(newData);
+      }
+    }
     setLoading(false);
   }
 
