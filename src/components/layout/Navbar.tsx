@@ -51,7 +51,13 @@ export default function Navbar() {
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link to="/" className="text-2xl font-bold tracking-tighter text-primary flex items-center gap-2">
+        <Link 
+          to="/" 
+          className={cn(
+            "text-2xl font-bold tracking-tighter flex items-center gap-2 transition-colors",
+            scrolled ? "text-primary" : "text-white"
+          )}
+        >
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">M</div>
           MukitX
         </Link>
@@ -63,8 +69,12 @@ export default function Navbar() {
               key={link.name}
               to={link.path}
               className={cn(
-                'text-sm font-medium hover:text-primary transition-colors',
-                location.pathname === link.path ? 'text-primary' : 'text-secondary/70 dark:text-white/70'
+                'text-sm font-medium transition-colors',
+                location.pathname === link.path 
+                  ? 'text-primary' 
+                  : scrolled 
+                    ? 'text-slate-600 dark:text-slate-300 hover:text-primary' 
+                    : 'text-white/80 hover:text-white'
               )}
             >
               {link.name}
@@ -75,7 +85,10 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-4">
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className={cn(
+              "p-2 rounded-full transition-colors",
+              scrolled ? "hover:bg-black/5 dark:hover:bg-white/5 text-slate-600 dark:text-slate-300" : "hover:bg-white/10 text-white"
+            )}
           >
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
@@ -84,7 +97,10 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <Link 
                 to={profile?.role === 'admin' ? '/admin' : '/dashboard'} 
-                className="flex items-center gap-2 text-sm font-medium px-4 py-2 hover:text-primary transition-colors"
+                className={cn(
+                  "flex items-center gap-2 text-sm font-medium px-4 py-2 transition-colors",
+                  scrolled ? "text-slate-600 dark:text-slate-300 hover:text-primary" : "text-white/80 hover:text-white"
+                )}
               >
                 {profile?.role === 'admin' ? <ShieldCheck size={18} /> : <LayoutDashboard size={18} />}
                 Dashboard
@@ -99,7 +115,13 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link to="/login" className="text-sm font-medium px-4 py-2 hover:text-primary transition-colors">
+              <Link 
+                to="/login" 
+                className={cn(
+                  "text-sm font-medium px-4 py-2 transition-colors",
+                  scrolled ? "text-slate-600 dark:text-slate-300 hover:text-primary" : "text-white/80 hover:text-white"
+                )}
+              >
                 Login
               </Link>
               <Link to="/register" className="btn-gradient !py-2 !px-5 text-sm">
@@ -110,7 +132,10 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <div className="lg:hidden flex items-center gap-4">
+        <div className={cn(
+          "lg:hidden flex items-center gap-4",
+          scrolled ? "text-slate-600 dark:text-slate-300" : "text-white"
+        )}>
           <button onClick={() => setDarkMode(!darkMode)} className="p-2">
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
