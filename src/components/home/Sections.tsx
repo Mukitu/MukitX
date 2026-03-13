@@ -23,18 +23,19 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6"
+          className="text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-6"
         >
-          Building Powerful <span className="text-primary">Digital Solutions</span> <br />
-          & Teaching Future Tech Skills
+          We help businesses grow with <br />
+          <span className="text-primary">High-converting Websites</span> <br />
+          & Creative Design
         </motion.h1>
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="text-xl text-secondary/70 dark:text-white/70 max-w-2xl mx-auto mb-10"
+          className="text-xl text-secondary/70 dark:text-white/70 max-w-2xl mx-auto mb-10 font-medium tracking-wide"
         >
-          MukitX helps startups, businesses and students grow using modern technology solutions and high-quality education.
+          Web Design • Branding • Social Media • Development
         </motion.p>
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -42,12 +43,15 @@ export function Hero() {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Link to="/courses" className="btn-gradient text-lg px-8 py-4 w-full sm:w-auto text-center">
-            Explore Courses
+          <Link to="/contact" className="btn-gradient text-lg px-8 py-4 w-full sm:w-auto text-center">
+            Get a Free Consultation
           </Link>
-          <a href="#portfolio" className="px-8 py-4 rounded-full border border-secondary/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all font-medium w-full sm:w-auto text-center">
-            View Our Work
-          </a>
+          <Link to="/portfolio" className="px-8 py-4 rounded-full border border-secondary/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all font-medium w-full sm:w-auto text-center">
+            View Portfolio
+          </Link>
+          <Link to="/courses" className="px-8 py-4 rounded-full border border-secondary/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all font-medium w-full sm:w-auto text-center">
+            Get Started
+          </Link>
         </motion.div>
       </div>
     </section>
